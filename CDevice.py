@@ -26,6 +26,11 @@ class CDevice:
         self.m_szUsername = "";                                   #property: User name
         self.m_szPassword = "";
         self.m_szURL = "";                                        #property: Password
+        self.m_szStaticIp = "";
+        self.m_szStaticMask = "";
+        self.m_szStaticGateway = "";
+        self.m_szPPPoEAccountName = "";
+        self.m_szPPPoEPassword = "";
         
     def GetDeviceType(self):                                      #method: get DeviceType
         return self.m_DeviceType;
@@ -65,4 +70,48 @@ class CDevice:
         self.SetUsername(szUsername);
         self.SetPassword(szPassword);
         self.GetBrowser().get(self.GetURL());
+        
+        
+    def OpenURL(self, szURL):
+        self.GetBrowser().get(szURL);
+        
+    #close the tab
+    def CloseTab(self):
+        self.GetBrowser().close();
+        
+    #close the browser
+    def CloseBrowser(self):
+        self.GetBrowser().quit();
+        
+        
+    def InitConnectToInternet_StaticLine(self, szIP, szMask, szGateway, szDNS1, szDNS2):
+        self.m_szStaticIp = szIP;
+        self.m_szStaticMask = szMask;
+        self.m_szStaticGateway = szGateway;
+        self.m_szDNS1 = szDNS1;
+        self.m_szDNS2 = szDNS2;
+        
+    def InitConnectToInternet_PPPoE(self, szAccountName, szPassword):
+        self.m_szPPPoEAccountName = szAccountName;
+        self.m_szPPPoEPassword = szPassword;
+        
+    def GetPPPoEAccountName(self):
+        return self.m_szPPPoEAccountName;
     
+    def GetPPPoEPassword(self):
+        return self.m_szPPPoEPassword;
+    
+    def GetStaticLineIP(self):
+        return self.m_szStaticIp;
+    
+    def GetStaticLineMask(self):
+        return self.m_szStaticMask;
+    
+    def GetStaticLineGateway(self):
+        return self.m_szStaticGateway;
+    
+    def GetStaticLineDNS1(self):
+        return self.m_szDNS1;
+    
+    def GetStaticLineDNS2(self):
+        return self.m_szDNS2;
