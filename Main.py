@@ -31,3 +31,7 @@ if __name__ == "__main__":
     #device.ConnectToInternet_PPPoE();
     #device.CloseBrowser();
     
+    #configure VLAN on LAN-x
+    #device.AddVlanInterface("30", "192.168.30.1", "255.255.255.0");
+    device.AddVlanToTrunk(3);
+    
