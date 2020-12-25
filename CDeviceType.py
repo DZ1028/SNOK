@@ -15,3 +15,8 @@ class CDeviceVersion(Enum):
     OtherFactory_OtherHardware_OtherSoftwareVersion = 1
     H3C_ERHMG2_MNW100_R1118 = 2
     
+class CAPTemplateType(Enum):
+    OtherApTemplate = 1
+    AP_TEMPLATE_1_149 = 2
+    AP_TEMPLATE_6_153 = 3
+    AP_TEMPLATE_11_157 = 4
