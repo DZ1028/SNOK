@@ -36,18 +36,26 @@ class CMenu:
         ###############################################
         self.m_oLabelAccessMode = Label(self.GetMainWindow(), text='接入方式', bg='white', font=('Arial', 12), width=30, height=2);
         self.m_oRadioPPPoEMode = Radiobutton(self.GetMainWindow(), text='PPPoE', variable=self.GetVarRadioAccessMode(), value='PPPoE', command=self.FnCmd_SelectRadio);
+        self.m_oRadioStaticMode = Radiobutton(self.GetMainWindow(), text='Static', variable=self.GetVarRadioAccessMode(), value='Static', command=self.FnCmd_SelectRadio);
         self.m_oEntryPPPoEAccount = Entry(self.GetMainWindow(), show=None, font=('Arial', 14));
         self.m_oLabelPPPoEAccount = Label(self.GetMainWindow(), text='PPPoE账号', bg='white', font=('Arial', 12), width=30, height=2);
         self.m_oEntryPPPoEPassword = Entry(self.GetMainWindow(), show='*', font=('Arial', 14));
         self.m_oLabelPPPoEPassword = Label(self.GetMainWindow(), text='PPPoE密码', bg='white', font=('Arial', 12), width=30, height=2);
         self.m_oConfirmButton = Button(self.GetMainWindow(), text='确定', bg="lightblue", width=10, command=self.FnCmd_Confirm);
         self.m_oCancelButton = Button(self.GetMainWindow(), text='取消', bg="lightblue", width=10, command=self.FnCmd_Cancel);
-        
+        var2 = StringVar();
+        var2.set(('LAN1', 'LAN2', 'LAN3', 'LAN4'))
+        self.m_oListBoxLANPort = Listbox(self.GetMainWindow(), listvariable=var2);
+        self.m_oLabelLANPort = Label(self.GetMainWindow(), text='端口', bg='white', font=('Arial', 12), width=30, height=2);        
+    
     def GetMainWindow(self):
         return self.m_oWindowMain;
     
     def GetRadioPPPoEMode(self):
         return self.m_oRadioPPPoEMode;
+    
+    def GetRadioStaticMode(self):
+        return self.m_oRadioStaticMode;
     
     def GetVarRadioAccessMode(self):
         return self.m_varRadioAccessMode;
@@ -84,6 +92,12 @@ class CMenu:
     
     def GetDevice(self):
         return self.m_oDevice;
+    
+    def GetListBoxLANPort(self):
+        return self.m_oListBoxLANPort;
+    
+    def GetLabelLANPort(self):
+        return self.m_oLabelLANPort;
     
     def MainWindowLoop(self):
         self.GetMainWindow().mainloop();
@@ -123,12 +137,16 @@ class CMenu:
     def TotalPack(self):
         self.GetLabelAccessMode().pack();
         self.GetRadioPPPoEMode().pack();
+        self.GetRadioStaticMode().pack();
         self.GetLabelPPPoEAccount().pack();
         self.GetEntryPPPoEAccount().pack();
         self.GetLabelPPPoEPassword().pack();
         self.GetEntryPPPoEPassword().pack();
         self.GetButtonConfirm().pack();
         self.GetButtonCancel().pack();
+        self.GetListBoxLANPort().pack();
+        self.GetLabelLANPort().pack();
+        
         
     
 

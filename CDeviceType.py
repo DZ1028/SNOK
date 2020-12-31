@@ -20,3 +20,8 @@ class CAPTemplateType(Enum):
     AP_TEMPLATE_1_149 = 2
     AP_TEMPLATE_6_153 = 3
     AP_TEMPLATE_11_157 = 4
+    
+class CFrequencePointType(Enum):
+    OtherFrequencePoint = 1
+    FREQUENCE_POINT_2Dot4G = 2
+    FREQUENCE_POINT_5G = 3

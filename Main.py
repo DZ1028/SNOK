@@ -17,10 +17,10 @@ const.ROUTER_MANAGERMENT_USERNAME = "admin";#"admin";
 const.ROUTER_MANAGERMENT_PASSWORD = "admin";#"admin@123@";
 
 if __name__ == "__main__":
-    #device = CDevice_H3C_ER3200G2(CDeviceVersion.H3C_ERHMG2_MNW100_R1118);
-    #device.LoginPrepare(const.ROUTER_MANAGERMENT_URL, const.ROUTER_MANAGERMENT_USERNAME, const.ROUTER_MANAGERMENT_PASSWORD);
-    #device.LoginInputUsernamePassword();
-    #device.LoginSubmit();
+    device = CDevice_H3C_ER3200G2(CDeviceVersion.H3C_ERHMG2_MNW100_R1118);
+    device.LoginPrepare(const.ROUTER_MANAGERMENT_URL, const.ROUTER_MANAGERMENT_USERNAME, const.ROUTER_MANAGERMENT_PASSWORD);
+    device.LoginInputUsernamePassword();
+    device.LoginSubmit();
     #print(device.GetUsername(), device.GetPassword());
 
     #configure static line
@@ -47,10 +47,12 @@ if __name__ == "__main__":
     #device.ConfigureAPMngIP("172.17.1.1", "255.255.255.0", "172.17.1.2", "172.17.1.254");
     
     #configure AP Template
-    #device.ConfigureAPTemplate("1-149", CAPTemplateType.AP_TEMPLATE_1_149, "NJZZ-TEST");
+    #device.ConfigureAPTemplate("1-149", "1-149", CAPTemplateType.AP_TEMPLATE_1_149, "TEST", "test1234", "test5678");
+    #device.ConfigureAPTemplate("6-153", "6-153", CAPTemplateType.AP_TEMPLATE_6_153, "TEST", "test1234", "test5678");
+    #device.ConfigureAPTemplate("11-157", "11-157", CAPTemplateType.AP_TEMPLATE_11_157, "TEST", "test1234", "test5678");
     
-    init_window = Tk();
-    menu = CMenu(init_window);
-    menu.InitMainWindow('翼企配', '800x600', 'pic.gif');
-    menu.TotalPack();
-    menu.MainWindowLoop();
+    #init_window = Tk();
+    #menu = CMenu(init_window);
+    #menu.InitMainWindow('翼企配', '800x600', 'pic.gif');
+    #menu.TotalPack();
+    #menu.MainWindowLoop();

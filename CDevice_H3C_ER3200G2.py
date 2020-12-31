@@ -4,7 +4,7 @@ Created on 2020-10-14
 
 @author: Dizzy
 '''
-from CDeviceType import CDeviceType, CAPTemplateType
+from CDeviceType import *
 from CDeviceType import CDeviceVersion
 from CDevice import CDevice
 from selenium.webdriver.common.keys import Keys #需要引入 keys 包
@@ -12,6 +12,7 @@ from selenium.webdriver.support.select import Select
 from const import Const
 from selenium.webdriver.common.action_chains import ActionChains
 import time
+from _ast import If
 
 const = Const();
 const.NAME_ACCOUNT = "account";
@@ -26,7 +27,7 @@ const.EXTEND_URL_CONFIG_AP_MNG_IP = "address_manage.asp";
 const.EXTEND_URL_ENABLE_AP_MNG_IP = "ap_manage_set.asp";
 const.EXTEND_URL_ADD_AP_TEMPLATE = "config_manage.asp";
 const.EXTEND_URL_ADD_AP_TEMPLATE_LIST = "ap_config_comment_list.asp";
-
+const.EXTEND_URL_ADD_SSID = "wlan_ap_ssid_config.asp";
 
 class CDevice_H3C_ER3200G2(CDevice):
     '''
@@ -173,22 +174,110 @@ class CDevice_H3C_ER3200G2(CDevice):
             self.GetBrowser().find_element_by_id("id_confirm").click();
             time.sleep(1)
             
-    def ConfigureAPTemplate(self, szTemplateName, enApTemplateType, szSSID):
+    def ConfigureAPTemplate(self, szTemplateName, szTemplateDesc, enApTemplateType, szCustomerSSID, szCustomerKey1, szCustomerKey2):
         if CDevice.GetDeviceType(self) == CDeviceType.H3C_ER3200G2 and CDevice.GetDeviceVersion(self) == CDeviceVersion.H3C_ERHMG2_MNW100_R1118:
-            #CDevice.OpenURL(self, self.GetURL() + const.EXTEND_URL_ADD_AP_TEMPLATE);
-            #self.GetBrowser().find_element_by_name("op_new").click();
-            CDevice.OpenURL(self, self.GetURL() + const.EXTEND_URL_ADD_AP_TEMPLATE_LIST);
+            CDevice.OpenURL(self, self.GetURL() + const.EXTEND_URL_ADD_AP_TEMPLATE);
+            self.GetBrowser().find_element_by_name("op_new").click();
+            allhandles=self.GetBrowser().window_handles;  #获取当前窗口句柄
+            #print(allhandles);
+            if self.GetBrowser().current_window_handle==allhandles[1]:  
+                pass;
+            else:
+                self.GetBrowser().switch_to_window(allhandles[1]);#切换窗口
+            #CDevice.OpenURL(self, self.GetURL() + const.EXTEND_URL_ADD_AP_TEMPLATE_LIST);
             self.GetBrowser().find_element_by_name("template_name").send_keys(szTemplateName);
-            self.GetBrowser().find_element_by_partial_link_text("2.4G").click();
+            self.GetBrowser().find_element_by_name("template_describe").send_keys(szTemplateDesc);
+            #self.GetBrowser().find_element_by_xpath("//tr[@id='Ssidbasicset']/td[1]").click();
+            Select(self.GetBrowser().find_element_by_name("swlanMode")).select_by_index(4);
+            Select(self.GetBrowser().find_element_by_name("swlanWidth")).select_by_index(1);
             if enApTemplateType == CAPTemplateType.AP_TEMPLATE_1_149:
-                self.GetBrowser().find_element_by_name("template_describe").send_keys("1-149");
-                Select(self.GetBrowser().find_element_by_name("swlanMode")).select_by_index(4);
-                Select(self.GetBrowser().find_element_by_name("swlanWidth")).select_by_index(1);
                 Select(self.GetBrowser().find_element_by_name("wlanChannel")).select_by_index(1);
-                self.GetBrowser().find_element_by_id("amend").click();
-            #elif enApTemplateType == CAPTemplateType.AP_TEMPLATE_6_153:
+            elif enApTemplateType == CAPTemplateType.AP_TEMPLATE_6_153:    
+                Select(self.GetBrowser().find_element_by_name("wlanChannel")).select_by_index(6);
+            elif enApTemplateType == CAPTemplateType.AP_TEMPLATE_11_157:
+                Select(self.GetBrowser().find_element_by_name("wlanChannel")).select_by_index(11);
+            
+            self.ConfigureExistSSID(szCustomerSSID + "-2.4G", szCustomerKey1, CFrequencePointType.FREQUENCE_POINT_2Dot4G);
+            self.ConfigureNewSSID(szCustomerSSID + "Guest-2.4G", szCustomerKey2);
+            self.GetBrowser().find_element_by_xpath("//tr[@id='Ssidbasicset']/td[1]").click();
+            time.sleep(1);
+            self.GetBrowser().find_element_by_xpath("//tr[@id='Ssidbasicset']/td[1]").click();
+            time.sleep(1);  
+            self.GetBrowser().find_element_by_xpath("//tr[@id='Ssidbasicset']/td[1]").click();
                 
-            #elif enApTemplateType == CAPTemplateType.AP_TEMPLATE_11_157:
+            self.GetBrowser().find_element_by_xpath("//tr[@id='ssidtaile5G']/td[1]").click();
+            Select(self.GetBrowser().find_element_by_name("swlanMode_5g")).select_by_index(1);
+            Select(self.GetBrowser().find_element_by_name("swlanWidth_5g")).select_by_index(2);
+            if enApTemplateType == CAPTemplateType.AP_TEMPLATE_1_149:
+                Select(self.GetBrowser().find_element_by_name("wlanChannel_5g")).select_by_index(9);
+            elif enApTemplateType == CAPTemplateType.AP_TEMPLATE_6_153:    
+                Select(self.GetBrowser().find_element_by_name("wlanChannel_5g")).select_by_index(10);
+            elif enApTemplateType == CAPTemplateType.AP_TEMPLATE_11_157:
+                Select(self.GetBrowser().find_element_by_name("wlanChannel_5g")).select_by_index(11);
+                
+            self.ConfigureExistSSID(szCustomerSSID + "-5G", szCustomerKey1, CFrequencePointType.FREQUENCE_POINT_5G);
+            self.ConfigureNewSSID(szCustomerSSID + "Guest-5G", szCustomerKey2); 
+            self.GetBrowser().find_element_by_xpath("//tr[@id='ssidtaile5G']/td[1]").click();             
+            time.sleep(1);
+            self.GetBrowser().find_element_by_xpath("//tr[@id='ssidtaile5G']/td[1]").click();
+            time.sleep(1);  
+            self.GetBrowser().find_element_by_xpath("//tr[@id='ssidtaile5G']/td[1]").click();                 
+            self.GetBrowser().find_element_by_id("amend").click();
+            
+            self.GetBrowser().switch_to_window(allhandles[0]);
+            self.GetBrowser().switch_to_default_content();
+                   
             time.sleep(1)
             
+    def ConfigureExistSSID(self, szSSIDName, szSSIDKey, enFrequencePointType):
+        if enFrequencePointType == CFrequencePointType.FREQUENCE_POINT_2Dot4G:
+            frameConfigureAPSSID = self.GetBrowser().find_element_by_xpath("//iframe[@id='wlan_ap_ssid_list_page']");
+        elif enFrequencePointType == CFrequencePointType.FREQUENCE_POINT_5G:
+            frameConfigureAPSSID = self.GetBrowser().find_element_by_xpath("//iframe[@id='wlan_ap_ssid_list_page_5g']");
+        self.GetBrowser().switch_to_frame(frameConfigureAPSSID);            
+        self.GetBrowser().find_element_by_xpath("//table[@id='disableclick']/tbody/tr[2]/td[1]").click();
+        allhandles2=self.GetBrowser().window_handles;  #获取当前窗口句柄
+        if self.GetBrowser().current_window_handle==allhandles2[2]:  
+            pass;
+        else:
+            self.GetBrowser().switch_to_window(allhandles2[2]);#切换窗口
+        if self.GetBrowser().find_element_by_name("ssid_en").is_selected():
+            pass;
+        else:
+            self.GetBrowser().find_element_by_name("ssid_en").click();
+        #self.GetBrowser().find_element_by_name("ssid_en").click();
+        self.GetBrowser().find_element_by_name("ssid_name").clear();
+        self.GetBrowser().find_element_by_name("ssid_name").send_keys(szSSIDName);
+        Select(self.GetBrowser().find_element_by_name("ssid_enc")).select_by_index(1);
+        self.GetBrowser().find_element_by_id("wpa_key").clear();
+        self.GetBrowser().find_element_by_id("wpa_key").send_keys(szSSIDKey);
+        self.GetBrowser().find_element_by_name("amend").click();
+        #self.GetBrowser().find_element_by_id("op_new").click();
+        #self.GetBrowser().find_element_by_partial_link_text("5G配置").click();
         
+        #self.GetBrowser().switch_to.parent_frame();
+        self.GetBrowser().switch_to_window(allhandles2[1]);
+        self.GetBrowser().switch_to_default_content();
+        time.sleep(1);
+        
+    def ConfigureNewSSID(self, szSSIDName, szSSIDKey):
+        self.GetBrowser().find_element_by_id("op_new").click();
+        allhandles2=self.GetBrowser().window_handles;  #获取当前窗口句柄
+        #print(allhandles);
+        if self.GetBrowser().current_window_handle==allhandles2[2]:  
+            pass;
+        else:
+            self.GetBrowser().switch_to_window(allhandles2[2]);#切换窗口
+        if self.GetBrowser().find_element_by_name("ssid_en").is_selected():
+            pass;
+        else:
+            self.GetBrowser().find_element_by_name("ssid_en").click();
+        self.GetBrowser().find_element_by_name("ssid_name").clear();
+        self.GetBrowser().find_element_by_name("ssid_name").send_keys(szSSIDName);
+        Select(self.GetBrowser().find_element_by_name("ssid_enc")).select_by_index(1);
+        self.GetBrowser().find_element_by_id("wpa_key").clear();
+        self.GetBrowser().find_element_by_id("wpa_key").send_keys(szSSIDKey);
+        self.GetBrowser().find_element_by_name("amend").click();
+        self.GetBrowser().switch_to_window(allhandles2[1]);
+        #self.GetBrowser().find_element_by_partial_link_text("5G配置").click();                        
+         
