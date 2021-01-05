@@ -33,7 +33,7 @@ class CMenu:
         self.m_oLabelAccessMode = Label(self.GetMainWindow(), text='接入方式', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
         self.m_oRadioPPPoEMode = Radiobutton(self.GetMainWindow(), text='PPPoE', variable=self.m_varRadioAccessMode, value='PPPoE', command=self.FnCmd_SelectRadio);
         self.m_oRadioStaticMode = Radiobutton(self.GetMainWindow(), text='Static', variable=self.m_varRadioAccessMode, value='Static', command=self.FnCmd_SelectRadio);
-        self.SetVarRadioAccessMode('PPPoE');
+        self.SetVarRadioAccessMode('Static');
         
         self.m_oEntryPPPoEAccount = Entry(self.GetMainWindow(), show=None, font=('Fixdsys', 14), state='disabled');
         self.m_oLabelPPPoEAccount = Label(self.GetMainWindow(), text='PPPoE账号', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
