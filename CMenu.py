@@ -8,6 +8,9 @@ from tkinter import *
 from CDevice_H3C_ER3200G2 import CDevice_H3C_ER3200G2
 from CDeviceType import CDeviceVersion, CAPTemplateType
 from const import Const
+from pip._internal import self_outdated_check
+import threading
+from _overlapped import NULL
 
 const = Const();
 const.ROUTER_MANAGERMENT_URL = "http://172.16.1.203:8080/";#"http://192.168.1.1/";#"http://172.16.1.1/";
@@ -20,11 +23,13 @@ class CMenu:
     def __init__(self, oWindowMain):
         self.m_oWindowMain = oWindowMain;
         self.m_varRadioAccessMode = StringVar();
+        self.m_varVLANInterfaceDHCPIsEnabled = IntVar();
         self.m_oImage = None;
         self.m_oLine = None;
         self.m_oOval = None;
         self.m_oArc = None;
         self.m_oRect = None;
+        self.m_threadProgress = None;
         
     def InitMainWindow(self, szWindowName, szWindowSize, szFileURL):
         self.GetMainWindow().title(szWindowName);
@@ -50,6 +55,17 @@ class CMenu:
         self.m_oEntryIPGateway = Entry(self.GetMainWindow(), show=None, font=('Fixdsys', 14));
         self.m_oLabelIPGateway = Label(self.GetMainWindow(), text='网关', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
         
+        self.m_oEntryVLANNew = Entry(self.GetMainWindow(), show=None, font=('Fixdsys', 14));
+        self.m_oLabelVLANNew = Label(self.GetMainWindow(), text='新增VLAN', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);        
+
+        self.m_oEntryVLANInterfaceIP = Entry(self.GetMainWindow(), show=None, font=('Fixdsys', 14));
+        self.m_oLabelVLANInterfaceIP = Label(self.GetMainWindow(), text='新增VLAN接口地址', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+                
+        self.m_oEntryVLANInterfaceMask = Entry(self.GetMainWindow(), show=None, font=('Fixdsys', 14));
+        self.m_oLabelVLANInterfaceMask = Label(self.GetMainWindow(), text='新增VLAN接口掩码', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+        
+        self.m_oCheckButtonVLANInterfaceDHCPIsEnabled = Checkbutton(self.GetMainWindow(), text='开启DHCP', variable=self.m_varVLANInterfaceDHCPIsEnabled, onvalue=1, offvalue=0);
+        self.m_oLabelVLANInterfaceDHCPIsEnabled = Label(self.GetMainWindow(), text='VLAN接口开启DHCP', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);         
         
         self.m_oConfirmButton = Button(self.GetMainWindow(), text='确定', bg="lightblue", width=10, command=self.FnCmd_Confirm);
         self.m_oCancelButton = Button(self.GetMainWindow(), text='取消', bg="lightblue", width=10, command=self.FnCmd_Cancel);
@@ -68,6 +84,9 @@ class CMenu:
     
     def GetRadioStaticMode(self):
         return self.m_oRadioStaticMode;
+    
+    def GetCheckButtonVLANInterfaceDHCPIsEnabled(self):
+        return self.m_oCheckButtonVLANInterfaceDHCPIsEnabled;
     
     def GetVarRadioAccessMode(self):
         return self.m_varRadioAccessMode;
@@ -98,7 +117,16 @@ class CMenu:
     
     def GetEntryIPGateway(self):
         return self.m_oEntryIPGateway;
-            
+    
+    def GetEntryVLANNew(self):
+        return self.m_oEntryVLANNew;
+    
+    def GetEntryVLANInterfaceIP(self):
+        return self.m_oEntryVLANInterfaceIP;
+    
+    def GetEntryVLANInterfaceMask(self):
+        return self.m_oEntryVLANInterfaceMask;
+    
     def GetLabelPPPoEAccount(self):
         return self.m_oLabelPPPoEAccount;
     
@@ -113,6 +141,21 @@ class CMenu:
     
     def GetLabelIPGateway(self):
         return self.m_oLabelIPGateway;
+    
+    def GetLabelVLANNew(self):
+        return self.m_oLabelVLANNew;
+    
+    def GetLabelVLANInterfaceIP(self):
+        return self.m_oLabelVLANInterfaceIP;
+    
+    def GetLabelVLANInterfaceMask(self):
+        return self.m_oLabelVLANInterfaceMask;
+    
+    def GetLabelVLANInterfaceDHCPIsEnabled(self):
+        return self.m_oLabelVLANInterfaceDHCPIsEnabled;
+    
+    def GetThreadProgress(self):
+        return self.m_threadProgress;
             
     def GetButtonConfirm(self):
         return self.m_oConfirmButton;
@@ -151,16 +194,35 @@ class CMenu:
         self.m_oRect = self.GetCanvas().create_rectangle(nCrdX1, nCrdY1, nCrdX2, nCrdY2);        
         
     def FnCmd_Confirm(self):
+        self.m_threadProgress = threading.Thread(target=self.FnCmd_LineNetwork, args=( ));
+        self.GetThreadProgress().setDaemon(True);
+        self.GetThreadProgress().start();
+        
+    def FnCmd_LineNetwork(self):
+        #login
         self.m_oDevice = CDevice_H3C_ER3200G2(CDeviceVersion.H3C_ERHMG2_MNW100_R1118);
         self.GetDevice().LoginPrepare(const.ROUTER_MANAGERMENT_URL, const.ROUTER_MANAGERMENT_USERNAME, const.ROUTER_MANAGERMENT_PASSWORD);
         self.GetDevice().LoginInputUsernamePassword();
         self.GetDevice().LoginSubmit();
-        #self.GetDevice().InitConnectToInternet_PPPoE(self.GetEntryPPPoEAccount().get(), self.GetEntryPPPoEPassword().get());
-        #self.GetDevice().ConnectToInternet_PPPoE();
-        #self.GetDevice().InitConnectToInternet_StaticLine("172.16.1.203", "255.255.255.0", "172.16.1.1", "218.2.135.1", "61.147.37.1");#IP mask gateway DNS1 DNS2
-        #self.GetDevice().ConnectToInternet_StaticLine();        
-        #self.GetDevice().CloseBrowser();
-        self.GetDevice().CloseTab();
+        
+        #connect to internet
+        if self.GetEntryPPPoEAccount().get() != '' and self.GetEntryPPPoEPassword() != '': 
+            self.GetDevice().InitConnectToInternet_PPPoE(self.GetEntryPPPoEAccount().get(), self.GetEntryPPPoEPassword().get());
+            self.GetDevice().ConnectToInternet_PPPoE();
+        elif self.GetEntryIPAddress() != '' and self.GetEntryIPMask().get() != '' and self.GetEntryIPGateway().get() != '':
+            self.GetDevice().InitConnectToInternet_StaticLine(self.GetEntryIPAddress().get(), self.GetEntryIPMask().get(), self.GetEntryIPGateway().get(), "218.2.135.1", "61.147.37.1");#IP mask gateway DNS1 DNS2
+            self.GetDevice().ConnectToInternet_StaticLine();        
+        
+        #add vlan interface
+        if self.GetEntryVLANNew().get() != '' and self.GetEntryVLANInterfaceIP().get() != '' and self.GetEntryVLANInterfaceMask().get() != '':
+            self.GetDevice().AddVlanInterface(self.GetEntryVLANNew().get(), self.GetEntryVLANInterfaceIP().get(), self.GetEntryVLANInterfaceMask().get());
+            #configure DHCP Pool to VLAN-x
+            if self.GetCheckButtonVLANInterfaceDHCPIsEnabled() == 1:
+                self.GetDevice().AddDHCPPoolToVlan(self.GetEntryVLANNew().get(), self.GetEntryVLANInterfaceIP().get()[0:-1]+'2', self.GetEntryVLANInterfaceIP().get()[0:-1]+'254', "218.2.135.1", "61.147.37.1");
+        
+        #close the browser
+        self.GetDevice().CloseBrowser();
+        self.GetDevice().CloseTab();        
         
     def FnCmd_Cancel(self):
         self.GetMainWindow().destroy();
@@ -198,7 +260,19 @@ class CMenu:
         
         self.GetLabelIPGateway().place(x = 1, y = 250);
         self.GetEntryIPGateway().place(x = 300, y = 250 + 5);
-              
+        
+        self.GetLabelVLANNew().place(x = 1, y = 300);
+        self.GetEntryVLANNew().place(x = 300, y = 300 + 5);
+        
+        self.GetLabelVLANInterfaceIP().place(x = 1, y = 350);
+        self.GetEntryVLANInterfaceIP().place(x = 300, y = 350 + 5);
+        
+        self.GetLabelVLANInterfaceMask().place(x = 1, y = 400);
+        self.GetEntryVLANInterfaceMask().place(x = 300, y = 400 + 5);
+        
+        self.GetLabelVLANInterfaceDHCPIsEnabled().place(x = 1, y = 450);
+        self.GetCheckButtonVLANInterfaceDHCPIsEnabled().place(x = 300, y = 450 + 5);
+        
         self.GetButtonConfirm().place(x = 300, y = 500);
         self.GetButtonCancel().place(x = 500, y = 500);
         #self.GetListBoxLANPort().pack();
