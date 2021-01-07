@@ -68,7 +68,10 @@ class CDevice_H3C_ER3200G2(CDevice):
             elementNetMask.send_keys(Keys.BACKSPACE);
             elementNetMask.send_keys(Keys.BACKSPACE);
             elementNetMask.send_keys(Keys.BACKSPACE);
-            elementNetMask.send_keys((CDevice.GetStaticLineMask(self))[1:]);
+            elementNetMask.send_keys(Keys.BACKSPACE);
+            elementNetMask.send_keys(Keys.BACKSPACE);
+            elementNetMask.send_keys(Keys.BACKSPACE);
+            elementNetMask.send_keys((CDevice.GetStaticLineMask(self)));
             self.GetBrowser().find_element_by_name("WAN1_GW").clear();
             self.GetBrowser().find_element_by_name("WAN1_GW").send_keys(CDevice.GetStaticLineGateway(self));
             self.GetBrowser().find_element_by_name("WAN1_DS1").clear();

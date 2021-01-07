@@ -93,6 +93,9 @@ class CMenu:
     
     def SetVarRadioAccessMode(self, varAccessMode):
         self.m_varRadioAccessMode.set(varAccessMode);
+        
+    def GetVarVLANInterfaceDHCPIsEnabled(self):
+        return self.m_varVLANInterfaceDHCPIsEnabled;
     
     def GetImageFile(self):
         return self.m_oImageFile;
@@ -217,7 +220,7 @@ class CMenu:
         if self.GetEntryVLANNew().get() != '' and self.GetEntryVLANInterfaceIP().get() != '' and self.GetEntryVLANInterfaceMask().get() != '':
             self.GetDevice().AddVlanInterface(self.GetEntryVLANNew().get(), self.GetEntryVLANInterfaceIP().get(), self.GetEntryVLANInterfaceMask().get());
             #configure DHCP Pool to VLAN-x
-            if self.GetCheckButtonVLANInterfaceDHCPIsEnabled() == 1:
+            if self.GetVarVLANInterfaceDHCPIsEnabled.get() == 1:
                 self.GetDevice().AddDHCPPoolToVlan(self.GetEntryVLANNew().get(), self.GetEntryVLANInterfaceIP().get()[0:-1]+'2', self.GetEntryVLANInterfaceIP().get()[0:-1]+'254', "218.2.135.1", "61.147.37.1");
         
         #close the browser
