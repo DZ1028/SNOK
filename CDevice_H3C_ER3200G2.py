@@ -28,6 +28,7 @@ const.EXTEND_URL_ENABLE_AP_MNG_IP = "ap_manage_set.asp";
 const.EXTEND_URL_ADD_AP_TEMPLATE = "config_manage.asp";
 const.EXTEND_URL_ADD_AP_TEMPLATE_LIST = "ap_config_comment_list.asp";
 const.EXTEND_URL_ADD_SSID = "wlan_ap_ssid_config.asp";
+const.EXTEND_URL_RATE_LIMIT = "ipqos_rate_limit.asp"
 
 class CDevice_H3C_ER3200G2(CDevice):
     '''
@@ -282,5 +283,22 @@ class CDevice_H3C_ER3200G2(CDevice):
         self.GetBrowser().find_element_by_id("wpa_key").send_keys(szSSIDKey);
         self.GetBrowser().find_element_by_name("amend").click();
         self.GetBrowser().switch_to_window(allhandles2[1]);
-        #self.GetBrowser().find_element_by_partial_link_text("5G配置").click();                        
+        #self.GetBrowser().find_element_by_partial_link_text("5G配置").click();              
+        
+    # Qos管理->IP流量限制
+    def QosRateLimit(self, start_ip, end_ip, up_limit, down_limit):
+        if CDevice.GetDeviceType(self) == CDeviceType.H3C_ER3200G2 and CDevice.GetDeviceVersion(self) == CDeviceVersion.H3C_ERHMG2_MNW100_R1118:
+            CDevice.OpenURL(self, self.GetURL() + const.EXTEND_URL_RATE_LIMIT)
+            attribute = self.GetBrowser().find_element_by_id("ID_BOUND_EN_1").get_attribute("disabled")
+            if attribute:
+                self.GetBrowser().find_element_by_name("ipqos_lanip_en").click()
+            self.GetBrowser().find_element_by_id("ID_BOUND_EN_2").click()
+            self.GetBrowser().find_element_by_name("applybtn").click()
+
+            self.GetBrowser().find_element_by_name("op_new").click()
+            self.GetBrowser().find_element_by_id("start_ip").send_keys(start_ip)
+            self.GetBrowser().find_element_by_id("end_ip").send_keys(end_ip)
+            self.GetBrowser().find_element_by_id("up_limit").send_keys(up_limit)
+            self.GetBrowser().find_element_by_id("down_limit").send_keys(down_limit)
+            self.GetBrowser().find_element_by_name("amend").click()          
          
