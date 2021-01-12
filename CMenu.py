@@ -11,6 +11,7 @@ from const import Const
 from pip._internal import self_outdated_check
 import threading
 from _overlapped import NULL
+from tkinter import ttk  #装载tkinter.ttk模块,用于Python3
 
 const = Const();
 const.ROUTER_MANAGERMENT_URL = "http://172.16.1.203:8080/";#"http://192.168.1.1/";#"http://172.16.1.1/";
@@ -24,6 +25,11 @@ class CMenu:
         self.m_oWindowMain = oWindowMain;
         self.m_varRadioAccessMode = StringVar();
         self.m_varVLANInterfaceDHCPIsEnabled = IntVar();
+        self.m_oNoteBook = ttk.Notebook(oWindowMain);
+        self.m_otabLineConnection = Frame(self.GetNoteBook(), bg='#F0F0F0');
+        self.GetNoteBook().add(self.GetTabLineConnection(), text='有线配置');
+        self.m_otabWifiConnection = Frame(self.GetNoteBook(), bg='#F0F0F0');
+        self.GetNoteBook().add(self.GetTabWifiConnection(), text='无线配置');
         self.m_oImage = None;
         self.m_oLine = None;
         self.m_oOval = None;
@@ -34,47 +40,50 @@ class CMenu:
     def InitMainWindow(self, szWindowName, szWindowSize, szFileURL):
         self.GetMainWindow().title(szWindowName);
         self.GetMainWindow().geometry(szWindowSize);
+        
+        #有线配置
+        tabLineConnection = self.GetTabLineConnection();#self.GetMainWindow();
 
-        self.m_oLabelAccessMode = Label(self.GetMainWindow(), text='接入方式', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
-        self.m_oRadioPPPoEMode = Radiobutton(self.GetMainWindow(), text='PPPoE', variable=self.m_varRadioAccessMode, value='PPPoE', command=self.FnCmd_SelectRadio);
-        self.m_oRadioStaticMode = Radiobutton(self.GetMainWindow(), text='Static', variable=self.m_varRadioAccessMode, value='Static', command=self.FnCmd_SelectRadio);
+        self.m_oLabelAccessMode = Label(tabLineConnection, text='接入方式', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+        self.m_oRadioPPPoEMode = Radiobutton(tabLineConnection, text='PPPoE', variable=self.m_varRadioAccessMode, value='PPPoE', command=self.FnCmd_SelectRadio);
+        self.m_oRadioStaticMode = Radiobutton(tabLineConnection, text='Static', variable=self.m_varRadioAccessMode, value='Static', command=self.FnCmd_SelectRadio);
         self.SetVarRadioAccessMode('Static');
         
-        self.m_oEntryPPPoEAccount = Entry(self.GetMainWindow(), show=None, font=('Fixdsys', 14), state='disabled');
-        self.m_oLabelPPPoEAccount = Label(self.GetMainWindow(), text='PPPoE账号', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+        self.m_oEntryPPPoEAccount = Entry(tabLineConnection, show=None, font=('Fixdsys', 14), state='disabled');
+        self.m_oLabelPPPoEAccount = Label(tabLineConnection, text='PPPoE账号', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
         
-        self.m_oEntryPPPoEPassword = Entry(self.GetMainWindow(), show='*', font=('Fixdsys', 14), state='disabled');
-        self.m_oLabelPPPoEPassword = Label(self.GetMainWindow(), text='PPPoE密码', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+        self.m_oEntryPPPoEPassword = Entry(tabLineConnection, show='*', font=('Fixdsys', 14), state='disabled');
+        self.m_oLabelPPPoEPassword = Label(tabLineConnection, text='PPPoE密码', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
         
-        self.m_oEntryIPAddress = Entry(self.GetMainWindow(), show=None, font=('Fixdsys', 14));
-        self.m_oLabelIPAddress = Label(self.GetMainWindow(), text='IP地址', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+        self.m_oEntryIPAddress = Entry(tabLineConnection, show=None, font=('Fixdsys', 14));
+        self.m_oLabelIPAddress = Label(tabLineConnection, text='IP地址', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
                 
-        self.m_oEntryIPMask = Entry(self.GetMainWindow(), show=None, font=('Fixdsys', 14));
-        self.m_oLabelIPMask = Label(self.GetMainWindow(), text='掩码', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+        self.m_oEntryIPMask = Entry(tabLineConnection, show=None, font=('Fixdsys', 14));
+        self.m_oLabelIPMask = Label(tabLineConnection, text='掩码', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
         
-        self.m_oEntryIPGateway = Entry(self.GetMainWindow(), show=None, font=('Fixdsys', 14));
-        self.m_oLabelIPGateway = Label(self.GetMainWindow(), text='网关', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+        self.m_oEntryIPGateway = Entry(tabLineConnection, show=None, font=('Fixdsys', 14));
+        self.m_oLabelIPGateway = Label(tabLineConnection, text='网关', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
         
-        self.m_oEntryVLANNew = Entry(self.GetMainWindow(), show=None, font=('Fixdsys', 14));
-        self.m_oLabelVLANNew = Label(self.GetMainWindow(), text='新增VLAN', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);        
+        self.m_oEntryVLANNew = Entry(tabLineConnection, show=None, font=('Fixdsys', 14));
+        self.m_oLabelVLANNew = Label(tabLineConnection, text='新增VLAN', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);        
 
-        self.m_oEntryVLANInterfaceIP = Entry(self.GetMainWindow(), show=None, font=('Fixdsys', 14));
-        self.m_oLabelVLANInterfaceIP = Label(self.GetMainWindow(), text='新增VLAN接口地址', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+        self.m_oEntryVLANInterfaceIP = Entry(tabLineConnection, show=None, font=('Fixdsys', 14));
+        self.m_oLabelVLANInterfaceIP = Label(tabLineConnection, text='新增VLAN接口地址', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
                 
-        self.m_oEntryVLANInterfaceMask = Entry(self.GetMainWindow(), show=None, font=('Fixdsys', 14));
-        self.m_oLabelVLANInterfaceMask = Label(self.GetMainWindow(), text='新增VLAN接口掩码', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+        self.m_oEntryVLANInterfaceMask = Entry(tabLineConnection, show=None, font=('Fixdsys', 14));
+        self.m_oLabelVLANInterfaceMask = Label(tabLineConnection, text='新增VLAN接口掩码', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
         
-        self.m_oCheckButtonVLANInterfaceDHCPIsEnabled = Checkbutton(self.GetMainWindow(), text='开启DHCP', variable=self.m_varVLANInterfaceDHCPIsEnabled, onvalue=1, offvalue=0);
-        self.m_oLabelVLANInterfaceDHCPIsEnabled = Label(self.GetMainWindow(), text='VLAN接口开启DHCP', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);         
+        self.m_oCheckButtonVLANInterfaceDHCPIsEnabled = Checkbutton(tabLineConnection, text='开启DHCP', variable=self.m_varVLANInterfaceDHCPIsEnabled, onvalue=1, offvalue=0);
+        self.m_oLabelVLANInterfaceDHCPIsEnabled = Label(tabLineConnection, text='VLAN接口开启DHCP', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);         
         
-        self.m_oConfirmButton = Button(self.GetMainWindow(), text='确定', bg="lightblue", width=10, command=self.FnCmd_Confirm);
-        self.m_oCancelButton = Button(self.GetMainWindow(), text='取消', bg="lightblue", width=10, command=self.FnCmd_Cancel);
+        self.m_oConfirmButton = Button(tabLineConnection, text='确定', bg="lightblue", width=10, command=self.FnCmd_Confirm);
+        self.m_oCancelButton = Button(tabLineConnection, text='取消', bg="lightblue", width=10, command=self.FnCmd_Cancel);
         
         ######
         var2 = StringVar();
         var2.set(('LAN1', 'LAN2', 'LAN3', 'LAN4'))
-        self.m_oListBoxLANPort = Listbox(self.GetMainWindow(), listvariable=var2);
-        self.m_oLabelLANPort = Label(self.GetMainWindow(), text='端口', bg='white', font=('Arial', 12), width=30, height=2);        
+        self.m_oListBoxLANPort = Listbox(tabLineConnection, listvariable=var2);
+        self.m_oLabelLANPort = Label(tabLineConnection, text='端口', bg='white', font=('Arial', 12), width=30, height=2);        
 
     def GetMainWindow(self):
         return self.m_oWindowMain;
@@ -130,6 +139,15 @@ class CMenu:
     def GetEntryVLANInterfaceMask(self):
         return self.m_oEntryVLANInterfaceMask;
     
+    def GetNoteBook(self):
+        return self.m_oNoteBook;
+    
+    def GetTabLineConnection(self):
+        return self.m_otabLineConnection;
+    
+    def GetTabWifiConnection(self):
+        return self.m_otabWifiConnection;
+      
     def GetLabelPPPoEAccount(self):
         return self.m_oLabelPPPoEAccount;
     
@@ -245,6 +263,8 @@ class CMenu:
             (self.GetEntryIPGateway())['state'] = 'normal';
         
     def TotalPlace(self):
+        self.GetNoteBook().pack(expand = 1, fill='both');
+        self.GetNoteBook().select(self.GetTabLineConnection());
         self.GetLabelAccessMode().place(x = 1, y = 1);
         self.GetRadioPPPoEMode().place(x = 300, y = 1 + 5);
         self.GetRadioStaticMode().place(x = 400, y = 1 + 5);
