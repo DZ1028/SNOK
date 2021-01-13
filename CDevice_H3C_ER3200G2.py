@@ -178,7 +178,7 @@ class CDevice_H3C_ER3200G2(CDevice):
             self.GetBrowser().find_element_by_id("id_confirm").click();
             time.sleep(1)
             
-    def ConfigureAPTemplate(self, szTemplateName, szTemplateDesc, enApTemplateType, szCustomerSSID, szCustomerKey1, szCustomerKey2):
+    def ConfigureAPTemplate(self, szTemplateName, szTemplateDesc, enApTemplateType, szCustomerSSID1, szCustomerSSID2, szCustomerKey1, szCustomerKey2):
         if CDevice.GetDeviceType(self) == CDeviceType.H3C_ER3200G2 and CDevice.GetDeviceVersion(self) == CDeviceVersion.H3C_ERHMG2_MNW100_R1118:
             CDevice.OpenURL(self, self.GetURL() + const.EXTEND_URL_ADD_AP_TEMPLATE);
             self.GetBrowser().find_element_by_name("op_new").click();
@@ -201,8 +201,8 @@ class CDevice_H3C_ER3200G2(CDevice):
             elif enApTemplateType == CAPTemplateType.AP_TEMPLATE_11_157:
                 Select(self.GetBrowser().find_element_by_name("wlanChannel")).select_by_index(11);
             
-            self.ConfigureExistSSID(szCustomerSSID + "-2.4G", szCustomerKey1, CFrequencePointType.FREQUENCE_POINT_2Dot4G);
-            self.ConfigureNewSSID(szCustomerSSID + "Guest-2.4G", szCustomerKey2);
+            self.ConfigureExistSSID(szCustomerSSID1 + "-2.4G", szCustomerKey1, CFrequencePointType.FREQUENCE_POINT_2Dot4G);
+            self.ConfigureNewSSID(szCustomerSSID1 + "Guest-2.4G", szCustomerKey2);
             self.GetBrowser().find_element_by_xpath("//tr[@id='Ssidbasicset']/td[1]").click();
             time.sleep(1);
             self.GetBrowser().find_element_by_xpath("//tr[@id='Ssidbasicset']/td[1]").click();
@@ -219,8 +219,8 @@ class CDevice_H3C_ER3200G2(CDevice):
             elif enApTemplateType == CAPTemplateType.AP_TEMPLATE_11_157:
                 Select(self.GetBrowser().find_element_by_name("wlanChannel_5g")).select_by_index(11);
                 
-            self.ConfigureExistSSID(szCustomerSSID + "-5G", szCustomerKey1, CFrequencePointType.FREQUENCE_POINT_5G);
-            self.ConfigureNewSSID(szCustomerSSID + "Guest-5G", szCustomerKey2); 
+            self.ConfigureExistSSID(szCustomerSSID2 + "-5G", szCustomerKey1, CFrequencePointType.FREQUENCE_POINT_5G);
+            self.ConfigureNewSSID(szCustomerSSID2 + "Guest-5G", szCustomerKey2); 
             self.GetBrowser().find_element_by_xpath("//tr[@id='ssidtaile5G']/td[1]").click();             
             time.sleep(1);
             self.GetBrowser().find_element_by_xpath("//tr[@id='ssidtaile5G']/td[1]").click();

@@ -25,6 +25,7 @@ class CMenu:
         self.m_oWindowMain = oWindowMain;
         self.m_varRadioAccessMode = StringVar();
         self.m_varVLANInterfaceDHCPIsEnabled = IntVar();
+        self.m_varSmartAPTemplateIsEnabled = IntVar();
         self.m_oNoteBook = ttk.Notebook(oWindowMain);
         self.m_otabLineConnection = Frame(self.GetNoteBook(), bg='#F0F0F0');
         self.GetNoteBook().add(self.GetTabLineConnection(), text='有线配置');
@@ -36,13 +37,27 @@ class CMenu:
         self.m_oArc = None;
         self.m_oRect = None;
         self.m_threadProgress = None;
+        self.m_threadProgressWifi = None;
         
     def InitMainWindow(self, szWindowName, szWindowSize, szFileURL):
         self.GetMainWindow().title(szWindowName);
         self.GetMainWindow().geometry(szWindowSize);
         
         #有线配置
-        tabLineConnection = self.GetTabLineConnection();#self.GetMainWindow();
+        self.InitLineConnection();
+        
+        #无线配置
+        self.InitWifiConnection();
+        #tabLineConnection = self.GetTabWifiConnection();#self.GetTabLineConnection();#self.GetMainWindow();
+        
+        ######
+        #var2 = StringVar();
+        #var2.set(('LAN1', 'LAN2', 'LAN3', 'LAN4'))
+        #self.m_oListBoxLANPort = Listbox(tabLineConnection, listvariable=var2);
+        #self.m_oLabelLANPort = Label(tabLineConnection, text='端口', bg='white', font=('Arial', 12), width=30, height=2);        
+
+    def InitLineConnection(self):
+        tabLineConnection = self.GetTabLineConnection();#self.GetTabWifiConnection();#self.GetMainWindow();
 
         self.m_oLabelAccessMode = Label(tabLineConnection, text='接入方式', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
         self.m_oRadioPPPoEMode = Radiobutton(tabLineConnection, text='PPPoE', variable=self.m_varRadioAccessMode, value='PPPoE', command=self.FnCmd_SelectRadio);
@@ -65,7 +80,7 @@ class CMenu:
         self.m_oLabelIPGateway = Label(tabLineConnection, text='网关', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
         
         self.m_oEntryVLANNew = Entry(tabLineConnection, show=None, font=('Fixdsys', 14));
-        self.m_oLabelVLANNew = Label(tabLineConnection, text='新增VLAN', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);        
+        self.m_oLabelVLANNew = Label(tabLineConnection, text='新增VLAN(无线)', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);        
 
         self.m_oEntryVLANInterfaceIP = Entry(tabLineConnection, show=None, font=('Fixdsys', 14));
         self.m_oLabelVLANInterfaceIP = Label(tabLineConnection, text='新增VLAN接口地址', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
@@ -78,13 +93,43 @@ class CMenu:
         
         self.m_oConfirmButton = Button(tabLineConnection, text='确定', bg="lightblue", width=10, command=self.FnCmd_Confirm);
         self.m_oCancelButton = Button(tabLineConnection, text='取消', bg="lightblue", width=10, command=self.FnCmd_Cancel);
-        
-        ######
-        var2 = StringVar();
-        var2.set(('LAN1', 'LAN2', 'LAN3', 'LAN4'))
-        self.m_oListBoxLANPort = Listbox(tabLineConnection, listvariable=var2);
-        self.m_oLabelLANPort = Label(tabLineConnection, text='端口', bg='white', font=('Arial', 12), width=30, height=2);        
+                
+    def InitWifiConnection(self):
+        tabLineConnection = self.GetTabWifiConnection();
 
+        self.m_oEntrySSIDName2Dot4G = Entry(tabLineConnection, show=None, font=('Fixdsys', 14));
+        self.m_oLabelSSIDName2Dot4G = Label(tabLineConnection, text='2.4G SSID名称', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+        
+        self.m_oEntrySSIDPassword2Dot4G = Entry(tabLineConnection, show='*', font=('Fixdsys', 14));
+        self.m_oLabelSSIDPassword2Dot4G = Label(tabLineConnection, text='2.4G SSID密钥', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+        
+        self.m_oEntrySSIDName5G = Entry(tabLineConnection, show=None, font=('Fixdsys', 14));
+        self.m_oLabelSSIDName5G = Label(tabLineConnection, text='5G SSID名称', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+        
+        self.m_oEntrySSIDPassword5G = Entry(tabLineConnection, show='*', font=('Fixdsys', 14));
+        self.m_oLabelSSIDPassword5G = Label(tabLineConnection, text='5G SSID密钥', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+        
+        self.m_oEntryVLANWifi = Entry(tabLineConnection, show=None, font=('Fixdsys', 14));
+        self.m_oLabelVLANWifi = Label(tabLineConnection, text='业务VLAN(无线)', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);        
+
+        self.m_oEntryAPManagementIPStart = Entry(tabLineConnection, show=None, font=('Fixdsys', 14));
+        self.m_oLabelAPManagementIPStart = Label(tabLineConnection, text='AP管理IP地址(起始)', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+        
+        self.m_oEntryAPManagementIPEnd = Entry(tabLineConnection, show=None, font=('Fixdsys', 14));
+        self.m_oLabelAPManagementIPEnd = Label(tabLineConnection, text='AP管理IP地址(结束)', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+
+        self.m_oEntrySpeedLimitUpload = Entry(tabLineConnection, show=None, font=('Fixdsys', 14));
+        self.m_oLabelSpeedLimitUpload = Label(tabLineConnection, text='单终端限速(上行)kbps', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+
+        self.m_oEntrySpeedLimitDownload = Entry(tabLineConnection, show=None, font=('Fixdsys', 14));
+        self.m_oLabelSpeedLimitDownload = Label(tabLineConnection, text='单终端限速(下行)kbps', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2);
+        
+        self.m_oCheckButtonSmartAPTemplateIsEnabled = Checkbutton(tabLineConnection, text='开启智能AP频点选择', variable=self.m_varSmartAPTemplateIsEnabled, onvalue=1, offvalue=0);
+        self.m_oLabelSmartAPTemplateIsEnabled = Label(tabLineConnection, text='AP频点自动选择开启模式', bg='#F0F0F0', font=('Fixdsys', 12), width=30, height=2); 
+        
+        self.m_oConfirmButtonWifi = Button(tabLineConnection, text='确定', bg="lightblue", width=10, command=self.FnCmd_ConfirmWifi);
+        self.m_oCancelButtonWifi = Button(tabLineConnection, text='取消', bg="lightblue", width=10, command=self.FnCmd_Cancel);
+                                
     def GetMainWindow(self):
         return self.m_oWindowMain;
 
@@ -218,7 +263,13 @@ class CMenu:
         self.m_threadProgress = threading.Thread(target=self.FnCmd_LineNetwork, args=( ));
         self.GetThreadProgress().setDaemon(True);
         self.GetThreadProgress().start();
-        
+
+    def FnCmd_ConfirmWifi(self):
+        self.m_threadProgressWifi = threading.Thread(target=self.FnCmd_WifiNetwork, args=( ));
+        self.m_threadProgressWifi.setDaemon(True);
+        self.m_threadProgressWifi.start();
+        pass;
+                
     def FnCmd_LineNetwork(self):
         #login
         self.m_oDevice = CDevice_H3C_ER3200G2(CDeviceVersion.H3C_ERHMG2_MNW100_R1118);
@@ -243,7 +294,41 @@ class CMenu:
         
         #close the browser
         self.GetDevice().CloseBrowser();
-        self.GetDevice().CloseTab();        
+        self.GetDevice().CloseTab();
+        
+    def FnCmd_WifiNetwork(self):
+        #login
+        self.m_oDevice = CDevice_H3C_ER3200G2(CDeviceVersion.H3C_ERHMG2_MNW100_R1118);
+        self.GetDevice().LoginPrepare(const.ROUTER_MANAGERMENT_URL, const.ROUTER_MANAGERMENT_USERNAME, const.ROUTER_MANAGERMENT_PASSWORD);
+        self.GetDevice().LoginInputUsernamePassword();
+        self.GetDevice().LoginSubmit();
+        
+        #configure AP Template
+        if self.m_oEntrySSIDName2Dot4G.get() != '' and self.m_oEntrySSIDName5G.get() != '' and self.m_oEntrySSIDPassword2Dot4G.get() != '' and self.m_oEntrySSIDPassword5G.get() != '':
+            self.GetDevice().ConfigureAPTemplate("1-149", "1-149", CAPTemplateType.AP_TEMPLATE_1_149, self.m_oEntrySSIDName2Dot4G.get(), self.m_oEntrySSIDName5G.get(), self.m_oEntrySSIDPassword2Dot4G.get(), self.m_oEntrySSIDPassword5G.get());
+            self.GetDevice().ConfigureAPTemplate("6-153", "6-153", CAPTemplateType.AP_TEMPLATE_6_153, self.m_oEntrySSIDName2Dot4G.get(), self.m_oEntrySSIDName5G.get(), self.m_oEntrySSIDPassword2Dot4G.get(), self.m_oEntrySSIDPassword5G.get());
+            self.GetDevice().ConfigureAPTemplate("11-157", "11-157", CAPTemplateType.AP_TEMPLATE_11_157, self.m_oEntrySSIDName2Dot4G.get(), self.m_oEntrySSIDName5G.get(), self.m_oEntrySSIDPassword2Dot4G.get(), self.m_oEntrySSIDPassword5G.get());
+
+        #configure speed limits
+        if self.GetEntryVLANInterfaceIP().get() != '' and self.m_oEntrySpeedLimitUpload.get() != '' and self.m_oEntrySpeedLimitDownload.get() != '':
+            self.GetDevice().QosRateLimit(self.GetEntryVLANInterfaceIP().get()[0:-1]+'2', self.GetEntryVLANInterfaceIP().get()[0:-1]+'254', self.m_oEntrySpeedLimitUpload.get(), self.m_oEntrySpeedLimitDownload.get());
+            self.GetDevice().QosRateLimit("192.168.1.2", "192.168.1.254", self.m_oEntrySpeedLimitUpload.get(), self.m_oEntrySpeedLimitDownload.get());
+        
+        #configure AP management IP
+        if self.m_oEntryAPManagementIPStart.get() != '' and self.m_oEntryAPManagementIPEnd.get() != '':
+            self.GetDevice().EnableAPMngIP(True);
+            self.GetDevice().ConfigureAPMngIP(self.m_oEntryAPManagementIPStart.get()[0:-1]+'1', "255.255.255.0", self.m_oEntryAPManagementIPStart.get(), self.m_oEntryAPManagementIPEnd.get());
+    
+        #choose Template for AP
+        if self.m_oCheckButtonSmartAPTemplateIsEnabled.get() == 1:
+            pass;
+        else:
+            pass;
+        #configure VLAN for AP
+        
+        #close the browser
+        self.GetDevice().CloseBrowser();
+        self.GetDevice().CloseTab();
         
     def FnCmd_Cancel(self):
         self.GetMainWindow().destroy();
@@ -265,6 +350,15 @@ class CMenu:
     def TotalPlace(self):
         self.GetNoteBook().pack(expand = 1, fill='both');
         self.GetNoteBook().select(self.GetTabLineConnection());
+        
+        self.LineConnectionPlace();
+        self.WifiConnectionPlace();
+        
+
+        #self.GetListBoxLANPort().pack();
+        #self.GetLabelLANPort().pack();
+        
+    def LineConnectionPlace(self):
         self.GetLabelAccessMode().place(x = 1, y = 1);
         self.GetRadioPPPoEMode().place(x = 300, y = 1 + 5);
         self.GetRadioStaticMode().place(x = 400, y = 1 + 5);
@@ -297,7 +391,38 @@ class CMenu:
         self.GetCheckButtonVLANInterfaceDHCPIsEnabled().place(x = 300, y = 450 + 5);
         
         self.GetButtonConfirm().place(x = 300, y = 500);
-        self.GetButtonCancel().place(x = 500, y = 500);
-        #self.GetListBoxLANPort().pack();
-        #self.GetLabelLANPort().pack();
+        self.GetButtonCancel().place(x = 500, y = 500); 
         
+    def WifiConnectionPlace(self):
+        self.m_oLabelSSIDName2Dot4G.place(x = 1, y = 1);
+        self.m_oEntrySSIDName2Dot4G.place(x = 300, y = 1 + 5);
+        
+        self.m_oLabelSSIDPassword2Dot4G.place(x = 1, y = 50);
+        self.m_oEntrySSIDPassword2Dot4G.place(x = 300, y = 50 + 5);
+        
+        self.m_oLabelSSIDName5G.place(x = 1, y = 100);
+        self.m_oEntrySSIDName5G.place(x = 300, y = 100 + 5);
+        
+        self.m_oLabelSSIDPassword5G.place(x = 1, y = 150);
+        self.m_oEntrySSIDPassword5G.place(x = 300, y = 150 + 5);
+        
+        self.m_oLabelVLANWifi.place(x = 1, y = 200);
+        self.m_oEntryVLANWifi.place(x = 300, y = 200 + 5);
+        
+        self.m_oLabelAPManagementIPStart.place(x = 1, y = 250);
+        self.m_oEntryAPManagementIPStart.place(x = 300, y = 250 + 5);
+
+        self.m_oLabelAPManagementIPEnd.place(x = 1, y = 300);
+        self.m_oEntryAPManagementIPEnd.place(x = 300, y = 300 + 5);
+
+        self.m_oLabelSpeedLimitUpload.place(x = 1, y = 350);
+        self.m_oEntrySpeedLimitUpload.place(x = 300, y = 350 + 5);
+        
+        self.m_oLabelSpeedLimitDownload.place(x = 1, y = 400);
+        self.m_oEntrySpeedLimitDownload.place(x = 300, y = 400 + 5);
+        
+        self.m_oLabelSmartAPTemplateIsEnabled.place(x = 1, y = 450);
+        self.m_oCheckButtonSmartAPTemplateIsEnabled.place(x = 300, y = 450 + 5);
+        
+        self.m_oConfirmButtonWifi.place(x = 300, y = 500);
+        self.m_oCancelButtonWifi.place(x = 500, y = 500);        
