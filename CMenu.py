@@ -39,7 +39,7 @@ class CMenu:
         self.m_threadProgress = None;
         self.m_threadProgressWifi = None;
         
-    def InitMainWindow(self, szWindowName, szWindowSize, szFileURL):
+    def InitMainWindow(self, szWindowName, szWindowSize):
         self.GetMainWindow().title(szWindowName);
         self.GetMainWindow().geometry(szWindowSize);
         
@@ -354,7 +354,6 @@ class CMenu:
         self.LineConnectionPlace();
         self.WifiConnectionPlace();
         
-
         #self.GetListBoxLANPort().pack();
         #self.GetLabelLANPort().pack();
         

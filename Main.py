@@ -59,6 +59,6 @@ if __name__ == "__main__":
     init_window.iconbitmap('chinatelecom.ico');
    
     menu = CMenu(init_window);
-    menu.InitMainWindow('翼企配', '800x600', 'pic.gif');
+    menu.InitMainWindow('翼企配', '800x600');
     menu.TotalPlace();
     menu.MainWindowLoop();
