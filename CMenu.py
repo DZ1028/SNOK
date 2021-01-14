@@ -293,7 +293,7 @@ class CMenu:
                 self.GetDevice().AddDHCPPoolToVlan(self.GetEntryVLANNew().get(), self.GetEntryVLANInterfaceIP().get()[0:-1]+'2', self.GetEntryVLANInterfaceIP().get()[0:-1]+'254', "218.2.135.1", "61.147.37.1");
         
         #close the browser
-        self.GetDevice().CloseBrowser();
+        #self.GetDevice().CloseBrowser();
         self.GetDevice().CloseTab();
         
     def FnCmd_WifiNetwork(self):
@@ -320,14 +320,14 @@ class CMenu:
             self.GetDevice().ConfigureAPMngIP(self.m_oEntryAPManagementIPStart.get()[0:-1]+'1', "255.255.255.0", self.m_oEntryAPManagementIPStart.get(), self.m_oEntryAPManagementIPEnd.get());
     
         #choose Template for AP
-        if self.m_oCheckButtonSmartAPTemplateIsEnabled.get() == 1:
+        if self.m_varSmartAPTemplateIsEnabled.get() == 1:
             pass;
         else:
             pass;
         #configure VLAN for AP
         
         #close the browser
-        self.GetDevice().CloseBrowser();
+        #self.GetDevice().CloseBrowser();
         self.GetDevice().CloseTab();
         
     def FnCmd_Cancel(self):

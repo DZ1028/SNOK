@@ -300,5 +300,6 @@ class CDevice_H3C_ER3200G2(CDevice):
             self.GetBrowser().find_element_by_id("end_ip").send_keys(end_ip)
             self.GetBrowser().find_element_by_id("up_limit").send_keys(up_limit)
             self.GetBrowser().find_element_by_id("down_limit").send_keys(down_limit)
-            self.GetBrowser().find_element_by_name("amend").click()          
+            self.GetBrowser().find_element_by_name("amend").click()
+            time.sleep(1);          
          

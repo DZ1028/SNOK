@@ -56,7 +56,7 @@ if __name__ == "__main__":
     #device.QosRateLimit("172.16.2.1", "172.16.2.254", "50000", "50000")
 
     init_window = Tk();
-    init_window.iconbitmap('chinatelecom.ico')
+    init_window.iconbitmap('chinatelecom.ico');
    
     menu = CMenu(init_window);
     menu.InitMainWindow('翼企配', '800x600', 'pic.gif');
