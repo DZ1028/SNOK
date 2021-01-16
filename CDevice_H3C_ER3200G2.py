@@ -303,3 +303,13 @@ class CDevice_H3C_ER3200G2(CDevice):
             self.GetBrowser().find_element_by_name("amend").click()
             time.sleep(1);          
          
+    
+    def ConfigureSSIDAdvance(self):
+        if CDevice.GetDeviceType(self) == CDeviceType.H3C_ER3200G2 and CDevice.GetDeviceVersion(self) == CDeviceVersion.H3C_ERHMG2_MNW100_R1118:
+            CDevice.OpenURL(self, self.GetURL() + const.EXTEND_URL_AP_SSID_ADVANCE);
+            if self.GetBrowser().find_element_by_name("wlanRoaming").is_selected():
+                pass;
+            else:
+                self.GetBrowser().find_element_by_name("wlanRoaming").click();
+            self.GetBrowser().find_element_by_name("amend").click();
+            time.sleep(1)

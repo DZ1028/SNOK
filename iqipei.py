@@ -10,13 +10,15 @@ from CDeviceType import CDeviceVersion, CAPTemplateType
 from const import Const
 from CMenu import CMenu
 from tkinter import *
+import _socket
 
 const = Const();
 const.ROUTER_MANAGERMENT_URL = "http://172.16.1.203:8080/";#"http://192.168.1.1/";#"http://172.16.1.1/";
 const.ROUTER_MANAGERMENT_USERNAME = "admin";#"admin";
 const.ROUTER_MANAGERMENT_PASSWORD = "admin";#"admin@123@";
 
-if __name__ == "__main__":
+
+    #if __name__ == "__main__":
     #device = CDevice_H3C_ER3200G2(CDeviceVersion.H3C_ERHMG2_MNW100_R1118);
     #device.LoginPrepare(const.ROUTER_MANAGERMENT_URL, const.ROUTER_MANAGERMENT_USERNAME, const.ROUTER_MANAGERMENT_PASSWORD);
     #device.LoginInputUsernamePassword();
@@ -55,10 +57,10 @@ if __name__ == "__main__":
     #device.QosRateLimit("172.16.1.2", "172.16.1.200", "50000", "50000")
     #device.QosRateLimit("172.16.2.1", "172.16.2.254", "50000", "50000")
 
-    init_window = Tk();
-    init_window.iconbitmap('chinatelecom.ico');
-   
-    menu = CMenu(init_window);
-    menu.InitMainWindow('翼企配', '800x600');
-    menu.TotalPlace();
-    menu.MainWindowLoop();
+init_window = Tk();
+init_window.iconbitmap('chinatelecom.ico');
+
+menu = CMenu(init_window);
+menu.InitMainWindow('翼企配', '800x600');
+menu.TotalPlace();
+menu.MainWindowLoop();

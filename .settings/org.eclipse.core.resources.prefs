@@ -3,5 +3,5 @@ encoding/CDevice.py=utf-8
 encoding/CDeviceType.py=utf-8
 encoding/CDevice_H3C_ER3200G2.py=utf-8
 encoding/CMenu.py=utf-8
-encoding/Main.py=utf-8
 encoding/const.py=utf-8
+encoding/iqipei.py=utf-8

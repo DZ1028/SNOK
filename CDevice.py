@@ -22,7 +22,7 @@ class CDevice:
         '''
         self.m_DeviceType = CDeviceType.OtherFactory_OtherType;   #property: DeviceType
         self.m_DeviceVersion = CDeviceVersion.OtherFactory_OtherHardware_OtherSoftwareVersion;#property: Device Version
-        self.m_Browser = webdriver.Chrome();                      #property: Web Browser
+        self.m_Browser = webdriver.Chrome(executable_path='./chromedriver.exe');                      #property: Web Browser
         self.m_szUsername = "";                                   #property: User name
         self.m_szPassword = "";
         self.m_szURL = "";                                        #property: Password

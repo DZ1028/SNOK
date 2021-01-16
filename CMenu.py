@@ -3,7 +3,7 @@
 @author: Dizzy
 '''
 #!/usr/bin/env python
- 
+
 from tkinter import *
 from CDevice_H3C_ER3200G2 import CDevice_H3C_ER3200G2
 from CDeviceType import CDeviceVersion, CAPTemplateType
